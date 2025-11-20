@@ -1,54 +1,28 @@
-﻿using ShopList.Gui.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ShopList.Gui.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
 namespace ShopList.Gui.ViewModels
 {
-    public class ShopListViewModel : INotifyPropertyChanged
+    public partial class ShopListViewModel : ObservableObject
     {
+        [ObservableProperty]
         private string _NombreDelArticulo = string.Empty;
+        [ObservableProperty]
         private int _Cantidad = 1;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public string NombreDelArticulo
-        {
-            get => _NombreDelArticulo;
-            set
-            {
-                if (_NombreDelArticulo != value)
-                {
-                    _NombreDelArticulo = value;
-                    OnPropertyChanged(nameof(NombreDelArticulo));
-                }
-            }
-        }
-
-        public int Cantidad
-        {
-            get => _Cantidad;
-            set
-            {
-                if ( _Cantidad != value)
-                {
-                    _Cantidad = value;
-                    OnPropertyChanged(nameof(Cantidad));
-                }
-            }
-        }
         public ObservableCollection<ShopListItem> ShopList { get; }
-
-        public ICommand AddShopListItemsCommand { get; private set; }
 
         public ShopListViewModel()
         {
             ShopList = new ObservableCollection<ShopListItem>();
             CargarDatos();
-            AddShopListItemsCommand = new Command(AddShopListItem);
-
+          
         }
-
+        [RelayCommand]
         public void AddShopListItem()
         {
             if (string.IsNullOrEmpty(NombreDelArticulo) || Cantidad <= 0)
@@ -63,7 +37,7 @@ namespace ShopList.Gui.ViewModels
                 Cantidad = this.Cantidad,
                 Comprado = false
             };
-            
+
             ShopList.Add(item);
             NombreDelArticulo = string.Empty;
             Cantidad = 1;
@@ -94,11 +68,6 @@ namespace ShopList.Gui.ViewModels
                 Cantidad = 100,
                 Comprado = false,
             });
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
         }
     }
 }
